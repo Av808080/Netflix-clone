@@ -2,10 +2,14 @@ import React, { ChangeEvent, useState, useCallback } from 'react'
 import Image from 'next/image'
 import axios from 'axios'
 import Input from '../UI/Input'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
+import { FcGoogle } from 'react-icons/fc'
+import { FaGithub } from 'react-icons/fa'
+
 
 const Auth = () => {
-    
+    const { data, status } = useSession()
+    console.log({ data, status });
     const [email, setEmail] = useState('')
     const [userName, setUserName] = useState('')
     const [password, setPassword] = useState('')
@@ -41,13 +45,19 @@ const Auth = () => {
             console.log(error);
         }
     }
+    const googleLogin = () => {
+        signIn('google', { callbackUrl: '/' })
+    }
+    const gitHubLogin = async () => {
+        await signIn('github', { callbackUrl: '/' })
+    }
     return (
-        <div className="h-full bg-[url('/Images/hero.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
-            <div className='bg-black h-full md:bg-opacity-50 '>
+        <div className="h-fit min-h-screen bg-[url('/Images/hero.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
+            <div className='bg-black h-fit min-h-screen md:bg-opacity-50 '>
                 <nav className='px-12 py-8 '>
                     <Image className='block mx-auto md:mx-4' src='/Images/logo.png' alt='Logo' width={300} height={180} />
                 </nav>
-                <section className='flex justify-center items-center'>
+                <section className='flex justify-center items-center py-4'>
                     <div className='bg-zinc-900 bg-opacity-80 px-6 py-6 max-w-md sm:px-16 w-4/5 rounded-md '>
                         <h1 className='text-zinc-50 text-center text-4xl font-semibold mb-6'>
                             {variant === 'login' ? 'Sign in' : 'Register'}</h1>
@@ -64,6 +74,12 @@ const Auth = () => {
                             onClick={variant === 'login' ? login : register}
                         >
                             {variant === 'login' ? 'Login' : 'Sign Up'}</button>
+                        <div className='flex justify-center items-center gap-4'>
+                            <button onClick={googleLogin}
+                                className='bg-neutral-50 rounded-full border-none' ><FcGoogle size={40} /></button>
+                            <button onClick={gitHubLogin}
+                                className='bg-neutral-50 rounded-full border-none' ><FaGithub size={40} /></button>
+                        </div>
                         <p className='text-neutral-400 my-4 text-center'>{variant === 'login'
                             ? 'First time using Netflix?  ' : 'Already have an account?  '}
                             <button className='text-white' onClick={toggleVariant}>
