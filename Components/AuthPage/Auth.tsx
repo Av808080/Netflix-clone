@@ -1,15 +1,46 @@
 import React, { ChangeEvent, useState, useCallback } from 'react'
 import Image from 'next/image'
+import axios from 'axios'
 import Input from '../UI/Input'
+import { signIn } from 'next-auth/react'
 
 const Auth = () => {
+    
     const [email, setEmail] = useState('')
     const [userName, setUserName] = useState('')
     const [password, setPassword] = useState('')
     const [variant, setVariant] = useState<'login' | 'register'>('login')
+
     const toggleVariant = useCallback(() => {
         setVariant(currentVariant => currentVariant === 'login' ? 'register' : 'login')
     }, [variant])
+
+    const register = async () => {
+        try {
+            await axios.post('/api/register', {
+                email,
+                password,
+                userName
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const login = async () => {
+        console.log({ password, email });
+
+        try {
+            await signIn('Credentials', {
+                email,
+                password,
+                redirect: true,
+                callbackUrl: '/'
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
     return (
         <div className="h-full bg-[url('/Images/hero.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
             <div className='bg-black h-full md:bg-opacity-50 '>
@@ -29,7 +60,9 @@ const Auth = () => {
                             <Input id='password' type='password' label='Password' value={password}
                                 onChange={(e: ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value) }} />
                         </div>
-                        <button className='bg-red-600 text-white w-full my-6 py-1.5 rounded-md hover:bg-red-700 transition duration-150' >
+                        <button className='bg-red-600 text-white w-full my-6 py-1.5 rounded-md hover:bg-red-700 transition duration-150'
+                            onClick={variant === 'login' ? login : register}
+                        >
                             {variant === 'login' ? 'Login' : 'Sign Up'}</button>
                         <p className='text-neutral-400 my-4 text-center'>{variant === 'login'
                             ? 'First time using Netflix?  ' : 'Already have an account?  '}
