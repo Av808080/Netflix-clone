@@ -26,6 +26,7 @@ const Auth = () => {
                 password,
                 userName
             })
+            login()
         } catch (error) {
             console.log(error);
         }
@@ -33,13 +34,12 @@ const Auth = () => {
 
     const login = async () => {
         console.log({ password, email });
-
         try {
             await signIn('Credentials', {
                 email,
                 password,
                 redirect: true,
-                callbackUrl: '/'
+                callbackUrl: '/Profiles'
             })
         } catch (error) {
             console.log(error);
