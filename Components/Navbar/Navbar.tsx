@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
 import { FiSearch } from 'react-icons/fi'
 import { BsBell } from 'react-icons/bs'
 import { RiArrowDropDownLine } from 'react-icons/ri'
 import MobileLink from './MobileLink'
+import useCurrentUser from '@/hooks/useCurrentUser'
 
 const links = [
     'Home', 'Sreies', 'Films',
@@ -18,6 +20,9 @@ const Navbar = () => {
     const [menuDropDownIsOpen, setMenuDropDownIsOpen] = useState(false)
     const [profileDropDownIsOpen, setProfileDropDownIsOpen] = useState(false)
     const [showBackground, setShowBackground] = useState(false)
+    const {push} = useRouter()
+    const {data:user , isLoading} = useCurrentUser()
+    const profileMenueText = user?.currentUser?.name + "'s Profile"   
     useEffect(() => {
         const handleResize = () => {
             if (window.scrollY >= TOP_OFFSET)
@@ -73,8 +78,7 @@ const Navbar = () => {
                     <RiArrowDropDownLine size={25} className={`${profileDropDownIsOpen ? 'rotate-180':'rotate-0'}`} />
                     {profileDropDownIsOpen && <ul className='absolute top-8 sm:top-12 right-2 
                      bg-black text-center shadow-md shadow-slate-900 px-2 sm:px-4 py-2 w-48'>
-                        <MobileLink>Profile</MobileLink>
-                        <MobileLink>D</MobileLink>
+                        <MobileLink onClick={()=>push('/Profiles')}>{profileMenueText}</MobileLink>
                         <MobileLink onClick={() => signOut()}>Logout</MobileLink>
                     </ul>}
                 </button>
